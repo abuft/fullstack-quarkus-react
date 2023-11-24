@@ -13,9 +13,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.Version;
+
 @Entity
 @Table(name = "projects",
-  uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "user_id"})})
+  uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"name", "user_id"})
+  }
+)
 public class Project extends PanacheEntity {
 
     @Column(nullable = false)
