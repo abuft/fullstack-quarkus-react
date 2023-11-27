@@ -1,6 +1,5 @@
 package com.example.fullstack;
 
-
 import io.vertx.pgclient.PgException;
 import org.hibernate.HibernateException;
 import org.hibernate.ObjectNotFoundException;

@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.jboss.resteasy.reactive.ResponseStatus;
 
+import io.quarkus.hibernate.reactive.panache.Panache;
+import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -38,6 +40,7 @@ public class UserResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @ResponseStatus(201)
+    @WithTransaction
     public Uni<User> create(User user) {
         return userService.create(user);
     }
