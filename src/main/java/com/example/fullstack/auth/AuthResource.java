@@ -8,7 +8,7 @@ import jakarta.ws.rs.Path;
 
 @Path("/api/v1/auth")
 public class AuthResource {
-    
+
     private final AuthService authService;
 
     @Inject

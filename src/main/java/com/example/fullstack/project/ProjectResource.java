@@ -50,5 +50,5 @@ public class ProjectResource {
     public Uni<Void> delete(@PathParam("id") long id) {
         return projectService.delete(id);
     }
-    
+
 }

@@ -15,16 +15,14 @@ import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class AuthService {
-    
+
     private final String issuer;
     private final UserService userService;
 
     @Inject
     public AuthService(
-        @ConfigProperty(name = "mp.jwt.verify.issuer") 
-        String issuer,
-        UserService userService
-    ) {
+            @ConfigProperty(name = "mp.jwt.verify.issuer") String issuer,
+            UserService userService) {
         this.issuer = issuer;
         this.userService = userService;
 
@@ -32,16 +30,16 @@ public class AuthService {
 
     public Uni<String> authenticate(AuthRequest authRequest) {
         return userService.findByName(authRequest.name())
-          .onItem()
-          .transform(user -> {
-            if (user == null || !UserService.matches(user, authRequest.password())) {
-                throw new AuthenticationFailedException("Invalid credentials");
-            }
-            return Jwt.issuer(issuer)
-              .upn(user.name)
-              .groups(new HashSet<>(user.roles))
-              .expiresIn(Duration.ofHours(1))
-              .sign();
-          });
+                .onItem()
+                .transform(user -> {
+                    if (user == null || !UserService.matches(user, authRequest.password())) {
+                        throw new AuthenticationFailedException("Invalid credentials");
+                    }
+                    return Jwt.issuer(issuer)
+                            .upn(user.name)
+                            .groups(new HashSet<>(user.roles))
+                            .expiresIn(Duration.ofHours(1))
+                            .sign();
+                });
     }
 }

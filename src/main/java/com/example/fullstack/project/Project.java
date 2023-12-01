@@ -15,24 +15,22 @@ import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.Version;
 
 @Entity
-@Table(name = "projects",
-  uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"name", "user_id"})
-  }
-)
+@Table(name = "projects", uniqueConstraints = {
+    @UniqueConstraint(columnNames = { "name", "user_id" })
+})
 public class Project extends PanacheEntity {
 
-    @Column(nullable = false)
-    public String name;
+  @Column(nullable = false)
+  public String name;
 
-    @ManyToOne(optional = false)
-    public User user;
+  @ManyToOne(optional = false)
+  public User user;
 
-    @CreationTimestamp
-    @Column(updatable = false, nullable = false)
-    public ZonedDateTime created;
+  @CreationTimestamp
+  @Column(updatable = false, nullable = false)
+  public ZonedDateTime created;
 
-    @Version
-    public int version;
-    
+  @Version
+  public int version;
+
 }

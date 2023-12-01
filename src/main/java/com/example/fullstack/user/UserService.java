@@ -18,7 +18,7 @@ import jakarta.ws.rs.core.Response;
 
 @ApplicationScoped
 public class UserService {
-    
+
     private final JsonWebToken jwt;
 
     @Inject
@@ -29,8 +29,7 @@ public class UserService {
     @WithTransaction
     public Uni<User> findById(long id) {
         return User.<User>findById(id)
-        .onItem().ifNull().failWith(() -> 
-        new ObjectNotFoundException(id, "User"));
+                .onItem().ifNull().failWith(() -> new ObjectNotFoundException(id, "User"));
     }
 
     @WithTransaction
@@ -52,18 +51,17 @@ public class UserService {
     @WithTransaction
     public Uni<User> update(User user) {
         return findById(user.id)
-          .chain(u -> User.getSession())
-          .chain(s -> s.merge(user));
+                .chain(u -> User.getSession())
+                .chain(s -> s.merge(user));
     }
 
     @WithTransaction
     public Uni<Void> delete(long id) {
         return findById(id)
-          .chain(u -> Uni.combine().all().unis(
-            Task.delete("user.id", u.id),
-            Project.delete("user.id", u.id)
-          ).asTuple()
-            .chain(t -> u.delete()));
+                .chain(u -> Uni.combine().all().unis(
+                        Task.delete("user.id", u.id),
+                        Project.delete("user.id", u.id)).asTuple()
+                        .chain(t -> u.delete()));
     }
 
     public Uni<User> getCurrentUser() {
@@ -79,12 +77,12 @@ public class UserService {
     @WithTransaction
     public Uni<User> changePassword(String currentPassword, String newPassword) {
         return getCurrentUser()
-          .chain(u -> {
-            if (!matches(u, currentPassword)) {
-                throw new ClientErrorException("Current password does not match", Response.Status.CONFLICT);
-            }
-            u.setPassword(BcryptUtil.bcryptHash(newPassword));
-            return u.persistAndFlush();
-          });
+                .chain(u -> {
+                    if (!matches(u, currentPassword)) {
+                        throw new ClientErrorException("Current password does not match", Response.Status.CONFLICT);
+                    }
+                    u.setPassword(BcryptUtil.bcryptHash(newPassword));
+                    return u.persistAndFlush();
+                });
     }
 }
