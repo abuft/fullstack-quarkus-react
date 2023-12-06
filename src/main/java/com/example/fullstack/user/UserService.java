@@ -29,7 +29,8 @@ public class UserService {
     @WithTransaction
     public Uni<User> findById(long id) {
         return User.<User>findById(id)
-                .onItem().ifNull().failWith(() -> new ObjectNotFoundException(id, "User"));
+                .onItem().ifNull().failWith(
+                        () -> new ObjectNotFoundException(id, "User"));
     }
 
     @WithTransaction
