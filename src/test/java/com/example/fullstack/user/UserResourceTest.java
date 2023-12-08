@@ -15,7 +15,7 @@ public class UserResourceTest {
 
     @Test
     @TestSecurity(user = "admin", roles = "admin")
-    void listUsers() {
+    void listAdminUser() {
         given()
                 .when()
                 .get("/api/v1/users")

@@ -43,10 +43,10 @@ public class UserService {
         return User.listAll();
     }
 
-    @WithTransaction
+    // @WithTransaction
     public Uni<User> create(User user) {
         user.password = BcryptUtil.bcryptHash(user.password);
-        return user.persist();
+        return user.persistAndFlush();
     }
 
     @WithTransaction

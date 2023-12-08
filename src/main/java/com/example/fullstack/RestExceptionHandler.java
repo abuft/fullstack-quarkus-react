@@ -19,13 +19,16 @@ public class RestExceptionHandler implements ExceptionMapper<HibernateException>
 
   @Override
   public Response toResponse(HibernateException exception) {
+
     if (hasExceptionInChain(exception, ObjectNotFoundException.class)) {
       return Response.status(Response.Status.NOT_FOUND).entity(exception.getMessage()).build();
     }
+
     if (hasExceptionInChain(exception, StaleObjectStateException.class)
         || hasPostgresErrorCode(exception, PG_UNIQUE_VIOLATION_ERROR)) {
       return Response.status(Response.Status.CONFLICT).build();
     }
+
     return Response
         .status(Response.Status.BAD_REQUEST)
         .entity("\"" + exception.getMessage() + "\"")
