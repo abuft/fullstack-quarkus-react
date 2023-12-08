@@ -10,10 +10,13 @@ import com.example.fullstack.user.UserService;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.quarkus.security.UnauthorizedException;
 import io.smallrye.mutiny.Uni;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
+@WithTransaction
+@RolesAllowed("user")
 public class TaskService {
 
   private final UserService userService;
@@ -23,7 +26,6 @@ public class TaskService {
     this.userService = userService;
   }
 
-  @WithTransaction
   public Uni<Task> findById(long id) {
     return userService.getCurrentUser()
         .chain(user -> Task.<Task>findById(id)
@@ -34,13 +36,11 @@ public class TaskService {
             }));
   }
 
-  @WithTransaction
   public Uni<List<Task>> listForUser() {
     return userService.getCurrentUser()
         .chain(user -> Task.find("user", user).list());
   }
 
-  @WithTransaction
   public Uni<Task> create(Task task) {
     return userService.getCurrentUser()
         .chain(user -> {
@@ -49,19 +49,16 @@ public class TaskService {
         });
   }
 
-  @WithTransaction
   public Uni<Task> update(Task task) {
     return findById(task.id)
         .chain(t -> Task.getSession())
         .chain(s -> s.merge(task));
   }
 
-  @WithTransaction
   public Uni<Void> delete(long id) {
     return findById(id).chain(Task::delete);
   }
 
-  @WithTransaction
   public Uni<Boolean> setComplete(long id, boolean complete) {
     return findById(id)
         .chain(task -> {

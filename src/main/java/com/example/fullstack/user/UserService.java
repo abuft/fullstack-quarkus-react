@@ -17,6 +17,7 @@ import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.core.Response;
 
 @ApplicationScoped
+@WithTransaction
 public class UserService {
 
     private final JsonWebToken jwt;
@@ -26,37 +27,31 @@ public class UserService {
         this.jwt = jwt;
     }
 
-    @WithTransaction
     public Uni<User> findById(long id) {
         return User.<User>findById(id)
                 .onItem().ifNull().failWith(
                         () -> new ObjectNotFoundException(id, "User"));
     }
 
-    @WithTransaction
     public Uni<User> findByName(String name) {
         return User.find("name", name).firstResult();
     }
 
-    @WithTransaction
     public Uni<List<User>> list() {
         return User.listAll();
     }
 
-    // @WithTransaction
     public Uni<User> create(User user) {
         user.password = BcryptUtil.bcryptHash(user.password);
         return user.persistAndFlush();
     }
 
-    @WithTransaction
     public Uni<User> update(User user) {
         return findById(user.id)
                 .chain(u -> User.getSession())
                 .chain(s -> s.merge(user));
     }
 
-    @WithTransaction
     public Uni<Void> delete(long id) {
         return findById(id)
                 .chain(u -> Uni.combine().all().unis(
@@ -75,7 +70,6 @@ public class UserService {
         return BcryptUtil.matches(password, user.password);
     }
 
-    @WithTransaction
     public Uni<User> changePassword(String currentPassword, String newPassword) {
         return getCurrentUser()
                 .chain(u -> {
