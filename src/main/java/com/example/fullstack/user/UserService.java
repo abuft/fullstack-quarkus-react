@@ -2,6 +2,7 @@ package com.example.fullstack.user;
 
 import java.util.List;
 
+import jakarta.annotation.security.RolesAllowed;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.hibernate.ObjectNotFoundException;
 
@@ -48,15 +49,18 @@ public class UserService {
 
     public Uni<User> update(User user) {
         return findById(user.id)
-                .chain(u -> User.getSession())
+                .chain(u -> {
+                    user.setPassword(u.password);
+                    return User.getSession();
+                })
                 .chain(s -> s.merge(user));
     }
 
     public Uni<Void> delete(long id) {
         return findById(id)
                 .chain(u -> Uni.combine().all().unis(
-                        Task.delete("user.id", u.id),
-                        Project.delete("user.id", u.id)).asTuple()
+                                Task.delete("user.id", u.id),
+                                Project.delete("user.id", u.id)).asTuple()
                         .chain(t -> u.delete()));
     }
 

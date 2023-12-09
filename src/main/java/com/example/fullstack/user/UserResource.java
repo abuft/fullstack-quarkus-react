@@ -2,6 +2,7 @@ package com.example.fullstack.user;
 
 import java.util.List;
 
+import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import org.jboss.resteasy.reactive.ResponseStatus;
 
 import io.smallrye.mutiny.Uni;
@@ -25,13 +26,11 @@ public class UserResource {
     private UserService userService;
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     public Uni<List<User>> getAllUsers() {
         return userService.list();
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
     public Uni<User> getById(@PathParam("id") long id) {
         return userService.findById(id);

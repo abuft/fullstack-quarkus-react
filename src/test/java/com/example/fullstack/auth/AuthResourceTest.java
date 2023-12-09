@@ -14,8 +14,8 @@ public class AuthResourceTest {
 
     /*
      * Like: curl -XPOST
-     *            -d"{\"name\":\"admin\",\"password\":\"quarkus\"}" 
-     *            -H "Content-Type: application/json" 
+     *            -d"{\"name\":\"admin\",\"password\":\"quarkus\"}"
+     *            -H "Content-Type: application/json"
      *            localhost:8080/api/v1/auth/login
      *
      * $ mvn clean test -Dtest=AuthResourceTest
@@ -23,22 +23,22 @@ public class AuthResourceTest {
     @Test
     void loginWithValidCredentials() {
         given()
-            .body("{\"name\":\"admin\",\"password\":\"quarkus\"}")
-            .contentType(ContentType.JSON)
-        .when().post("/api/v1/auth/login")
-        .then()
-            .statusCode(200)
-            .body(not(emptyString()));
+                .body("{\"name\":\"admin\",\"password\":\"quarkus\"}")
+                .contentType(ContentType.JSON)
+                .when().post("/api/v1/auth/login")
+                .then()
+                .statusCode(200)
+                .body(not(emptyString()));
     }
 
     @Test
     void loginWithInvalidCredentials() {
         given()
-          .body("{\"name\":\"admin\",\"password\":\"invalid password\"}")
-          .contentType(ContentType.JSON)
-        .when().post("/api/v1/auth/login")
-        .then()
-          .statusCode(401);
+                .body("{\"name\":\"admin\",\"password\":\"invalid password\"}")
+                .contentType(ContentType.JSON)
+                .when().post("/api/v1/auth/login")
+                .then()
+                .statusCode(401);
     }
 
 }

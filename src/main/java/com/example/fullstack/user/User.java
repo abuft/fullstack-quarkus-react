@@ -43,4 +43,16 @@ public class User extends PanacheEntity {
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "role")
     public List<String> roles;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", created=" + created +
+                ", version=" + version +
+                ", roles=" + roles +
+                ", id=" + id +
+                '}';
+    }
 }
