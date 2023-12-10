@@ -1,17 +1,15 @@
 package com.example.fullstack.project;
 
-import java.util.List;
-
-import org.hibernate.ObjectNotFoundException;
-
 import com.example.fullstack.task.Task;
 import com.example.fullstack.user.UserService;
-
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.quarkus.security.UnauthorizedException;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.hibernate.ObjectNotFoundException;
+
+import java.util.List;
 
 @ApplicationScoped
 public class ProjectService {

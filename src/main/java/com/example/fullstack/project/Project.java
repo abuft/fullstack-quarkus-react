@@ -1,18 +1,11 @@
 package com.example.fullstack.project;
 
-import java.time.ZonedDateTime;
-
+import com.example.fullstack.user.User;
+import io.quarkus.hibernate.reactive.panache.PanacheEntity;
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.example.fullstack.user.User;
-
-import io.quarkus.hibernate.reactive.panache.PanacheEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-import jakarta.persistence.Version;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "projects", uniqueConstraints = {
@@ -33,4 +26,14 @@ public class Project extends PanacheEntity {
     @Version
     public int version;
 
+    @Override
+    public String toString() {
+        return "Project{" +
+                "name='" + name + '\'' +
+                ", user=" + user +
+                ", created=" + created +
+                ", version=" + version +
+                ", id=" + id +
+                '}';
+    }
 }

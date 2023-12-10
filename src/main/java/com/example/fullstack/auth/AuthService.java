@@ -1,17 +1,15 @@
 package com.example.fullstack.auth;
 
-import java.time.Duration;
-import java.util.HashSet;
-
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-
 import com.example.fullstack.user.UserService;
-
 import io.quarkus.security.AuthenticationFailedException;
 import io.smallrye.jwt.build.Jwt;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
+import java.time.Duration;
+import java.util.HashSet;
 
 @ApplicationScoped
 public class AuthService {

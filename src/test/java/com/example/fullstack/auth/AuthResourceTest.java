@@ -1,13 +1,12 @@
 package com.example.fullstack.auth;
 
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.http.ContentType;
+import org.junit.jupiter.api.Test;
+
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.not;
-
-import org.junit.jupiter.api.Test;
-
-import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.http.ContentType;
 
 @QuarkusTest
 public class AuthResourceTest {
@@ -40,5 +39,4 @@ public class AuthResourceTest {
                 .then()
                 .statusCode(401);
     }
-
 }

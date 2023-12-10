@@ -1,17 +1,15 @@
 package com.example.fullstack.user;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
-import static org.hamcrest.text.IsEmptyString.emptyString;
-
-import org.jboss.logging.Logger;
-import org.junit.jupiter.api.Test;
-
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
+import org.jboss.logging.Logger;
+import org.junit.jupiter.api.Test;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
+import static org.hamcrest.text.IsEmptyString.emptyString;
 
 @QuarkusTest
 public class UserResourceTest {
@@ -29,29 +27,6 @@ public class UserResourceTest {
                 .body("$.size()", greaterThanOrEqualTo(1),
                         "[0].name", is("admin"),
                         "[0].password", nullValue());
-    }
-
-    @Test
-    @TestSecurity(user = "admin", roles = "admin")
-    void createUpdate() {
-        var user = given()
-                .body("{\"name\":\"foo\",\"password\":\"test\",\"roles\":[\"user\"]}")
-                .contentType(ContentType.JSON)
-                .when()
-                .post("/api/v1/users")
-                .as(User.class);
-
-        LOG.info("==INFO==> " + user);
-        user.name = "updated";
-
-        given()
-                .body(user)
-                .contentType(ContentType.JSON)
-                .when().put("/api/v1/users/" + user.id)
-                .then()
-                .statusCode(200)
-                .body("name", is("updated"),
-                        "version", is(user.version + 1));
     }
 
     @Test
@@ -95,6 +70,29 @@ public class UserResourceTest {
 
     @Test
     @TestSecurity(user = "admin", roles = "admin")
+    void createUpdate() {
+        var user = given()
+                .body("{\"name\":\"foo\",\"password\":\"test\",\"roles\":[\"user\"]}")
+                .contentType(ContentType.JSON)
+                .when()
+                .post("/api/v1/users")
+                .as(User.class);
+
+        LOG.info("==INFO==> " + user);
+        user.name = "updated";
+
+        given()
+                .body(user)
+                .contentType(ContentType.JSON)
+                .when().put("/api/v1/users/" + user.id)
+                .then()
+                .statusCode(200)
+                .body("name", is("updated"),
+                        "version", is(user.version + 1));
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = "admin")
     void deleteUser() {
         var toDelete = given()
                 .body("{\"name\":\"delete\",\"password\":\"test\",\"roles\":[\"user\"]}")
@@ -111,12 +109,28 @@ public class UserResourceTest {
                 .then()
                 .statusCode(204);
 
-        // FIXME: assertThat(User.findById(toDelete.id).await().indefinitely(), nullValue());
-
         given()
                 .when()
                 .get("/api/v1/users/" + toDelete.id)
                 .then()
                 .statusCode(404);
+
+        /*
+        FIXME: reactive testing changes in Quarkus 3
+               Migration-Guide: https://github.com/quarkusio/quarkus/wiki/Migration-Guide-3.0#hibernate-reactive-panache
+        assertThat(User.findById(toDelete.id).await().indefinitely(), nullValue());
+         */
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = "admin")
+    void updateOptimisticLock() {
+        given()
+                .body("{\"name\":\"updated\",\"password\":\"test\",\"version\":\"1337\"}")
+                .contentType(ContentType.JSON)
+                .when()
+                .put("/api/v1/users/0")
+                .then()
+                .statusCode(409);
     }
 }
