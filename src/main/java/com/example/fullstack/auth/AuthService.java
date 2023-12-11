@@ -34,10 +34,11 @@ public class AuthService {
                         throw new AuthenticationFailedException("Invalid credentials");
                     }
                     return Jwt.issuer(issuer)
-                            .upn(user.name)
+                            .upn(user.name)  // user principal name
                             .groups(new HashSet<>(user.roles))
-                            .expiresIn(Duration.ofHours(1))
+                            .expiresIn(Duration.ofHours(1L))
                             .sign();
                 });
+        // TODO: refresh token?
     }
 }

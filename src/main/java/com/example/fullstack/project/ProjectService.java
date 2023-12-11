@@ -8,6 +8,7 @@ import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.hibernate.ObjectNotFoundException;
+import org.jboss.logging.Logger;
 
 import java.util.List;
 
@@ -15,6 +16,9 @@ import java.util.List;
 public class ProjectService {
 
     private final UserService userService;
+
+    @Inject
+    Logger logger;
 
     @Inject
     public ProjectService(UserService userService) {
@@ -36,8 +40,8 @@ public class ProjectService {
 
     @WithTransaction
     public Uni<List<Project>> listForUser() {
-        return userService.getCurrentUser()
-                .chain(user -> Project.find("user", user).list());
+        logger.info("===> list Projects of a user <===");
+        return userService.getCurrentUser().chain(user -> Project.find("user", user).list());
     }
 
     @WithTransaction

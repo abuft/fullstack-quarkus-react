@@ -31,19 +31,25 @@ public class UserService {
     @WithTransaction
     public Uni<User> findById(long id) {
         return User.<User>findById(id)
-                .onItem().ifNull().failWith(
-                        () -> new ObjectNotFoundException(id, "User"));
+                .onItem()
+                .ifNull()
+                .failWith(
+                        () -> new ObjectNotFoundException(id, "User")
+                );
     }
 
     @WithTransaction
     public Uni<User> findByName(String name) {
-        return User.find("name", name).firstResult();
+        // find("name", name) is the short of the query
+        // find("from User u where u.name = ?1", name)
+        return User.<User>find("name", name).firstResult();
     }
 
     public Uni<List<User>> list() {
         return User.listAll();
     }
 
+    @WithTransaction // may be not needed? why?
     public Uni<User> create(User user) {
         user.password = BcryptUtil.bcryptHash(user.password);
         return user.persistAndFlush();

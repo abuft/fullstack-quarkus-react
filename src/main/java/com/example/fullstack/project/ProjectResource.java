@@ -13,12 +13,16 @@ import java.util.List;
 @RolesAllowed("user")
 public class ProjectResource {
 
+    /*
     private final ProjectService projectService;
 
     @Inject
     public ProjectResource(ProjectService projectService) {
         this.projectService = projectService;
     }
+    */
+    @Inject
+    private ProjectService projectService;
 
     @GET
     public Uni<List<Project>> get() {

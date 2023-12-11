@@ -13,7 +13,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 @ApplicationScoped
-@WithTransaction
 @RolesAllowed("user")
 public class TaskService {
 
@@ -24,6 +23,7 @@ public class TaskService {
         this.userService = userService;
     }
 
+    @WithTransaction
     public Uni<Task> findById(long id) {
         return userService.getCurrentUser()
                 .chain(user -> Task.<Task>findById(id)
@@ -39,6 +39,7 @@ public class TaskService {
                 .chain(user -> Task.find("user", user).list());
     }
 
+    @WithTransaction
     public Uni<Task> create(Task task) {
         return userService.getCurrentUser()
                 .chain(user -> {
@@ -47,16 +48,19 @@ public class TaskService {
                 });
     }
 
+    @WithTransaction
     public Uni<Task> update(Task task) {
         return findById(task.id)
                 .chain(t -> Task.getSession())
                 .chain(s -> s.merge(task));
     }
 
+    @WithTransaction
     public Uni<Void> delete(long id) {
         return findById(id).chain(Task::delete);
     }
 
+    @WithTransaction
     public Uni<Boolean> setComplete(long id, boolean complete) {
         return findById(id)
                 .chain(task -> {
