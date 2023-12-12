@@ -75,11 +75,10 @@ public class UserService {
     }
 
     public Uni<User> getCurrentUser() {
-        // ToDo: replace implementation once security is added to the project
-        // return User.find("order by id").firstResult();
         return findByName(jwt.getName());
     }
 
+    @WithTransaction
     public Uni<User> changePassword(String currentPassword, String newPassword) {
         return getCurrentUser()
                 .chain(u -> {
