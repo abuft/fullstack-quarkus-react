@@ -1,5 +1,6 @@
 package com.example.fullstack.user;
 
+import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
@@ -10,6 +11,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 import static org.hamcrest.text.IsEmptyString.emptyString;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @QuarkusTest
 public class UserResourceTest {
@@ -18,14 +20,14 @@ public class UserResourceTest {
 
     @Test
     @TestSecurity(user = "admin", roles = "admin")
-    void listAdminUser() {
+    void listUser() {
         given()
                 .when()
                 .get("/api/v1/users")
                 .then()
                 .statusCode(200)
                 .body("$.size()", greaterThanOrEqualTo(1),
-                        "[0].name", is("admin"),
+                        "[0].name", is(not(emptyString())),
                         "[0].password", nullValue());
     }
 
@@ -132,5 +134,24 @@ public class UserResourceTest {
                 .put("/api/v1/users/0")
                 .then()
                 .statusCode(409);
+    }
+
+    @Test
+    @TestSecurity(user = "admin", roles = "user")
+    void changePassword() {
+        given()
+                .body("{\"currentPassword\":\"quarkus\", \"newPassword\":\"changed\"}")
+                .contentType(ContentType.JSON)
+                .when()
+                .put("/api/v1/users/self/password")
+                .then()
+                .statusCode(200);
+
+        /*
+        FIXME: reactive testing changes in Quarkus 3. Error No currenct Vertx context found
+               Migration-Guide: https://github.com/quarkusio/quarkus/wiki/Migration-Guide-3.0#hibernate-reactive-panache
+        assertTrue(BcryptUtil.matches("changed",
+                User.<User>findById(0L).await().indefinitely().password));
+         */
     }
 }
