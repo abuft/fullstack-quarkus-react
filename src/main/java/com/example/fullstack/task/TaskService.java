@@ -8,15 +8,18 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.hibernate.ObjectNotFoundException;
+import org.jboss.logging.Logger;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 
 @ApplicationScoped
-@RolesAllowed("user")
 public class TaskService {
 
     private final UserService userService;
+
+    @Inject
+    Logger logger;
 
     @Inject
     public TaskService(UserService userService) {
@@ -29,9 +32,19 @@ public class TaskService {
                 .chain(user -> Task.<Task>findById(id)
                         .onItem().ifNull().failWith(() -> new ObjectNotFoundException(id, "Task"))
                         .onItem().invoke(task -> {
+                            if (!user.equals(task.user)) {
+                                throw new UnauthorizedException("You are not allowed to update this task");
+                            }
+                        }));
+        /*
+        return userService.getCurrentUser()
+                .chain(user -> Task.<Task>findById(id)
+                        .onItem().ifNull().failWith(() -> new ObjectNotFoundException(id, "Task"))
+                        .onItem().invoke(task -> {
                             throw new UnauthorizedException(
                                     "You are not allowed to update this task");
                         }));
+         */
     }
 
     public Uni<List<Task>> listForUser() {
