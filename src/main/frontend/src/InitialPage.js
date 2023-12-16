@@ -5,7 +5,7 @@ import {Layout} from './layout';
 export const InitialPage = () => (
   <Layout>
     <Typography variant='h4' >
-      Display a Dummy Page :)
+    A simple dummy page :)
     </Typography>
   </Layout>
 );
